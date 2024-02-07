@@ -1,18 +1,24 @@
 import React from 'react';
-function Sort({ value, onClickSort }) {
+import { useSelector, useDispatch } from 'react-redux';
+import { setSort } from '../Redux/slices/filterSlice';
+
+const popArr = [
+  { name: 'популярности(DESC)', sortProperty: 'rating' },
+  { name: 'популярности(ASC)', sortProperty: '-rating' },
+  { name: 'цене(DESC)', sortProperty: 'price' },
+  { name: 'цене(ASC)', sortProperty: '-price' },
+  { name: 'алфавиту(DESC)', sortProperty: 'title' },
+  { name: 'алфавиту(ASC)', sortProperty: '-title' },
+];
+
+function Sort() {
+  const dispatch = useDispatch();
+  const sort = useSelector(state => state.filter.sort);
+
   const [openPop, setOpenPop] = React.useState(false);
 
-  const popArr = [
-    { name: 'популярности(DESC)', sort: 'rating' },
-    { name: 'популярности(ASC)', sort: '-rating' },
-    { name: 'цене(DESC)', sort: 'price' },
-    { name: 'цене(ASC)', sort: '-price' },
-    { name: 'алфавиту(DESC)', sort: 'title' },
-    { name: 'алфавиту(ASC)', sort: '-title' },
-  ];
-
-  const onClickPopItem = i => {
-    onClickSort(i);
+  const onClickPopItem = obj => {
+    dispatch(setSort(obj));
     setOpenPop(false);
   };
 
@@ -32,16 +38,18 @@ function Sort({ value, onClickSort }) {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span onClick={() => setOpenPop(!openPop)}>{value.name}</span>
+        <span onClick={() => setOpenPop(!openPop)}>{sort.name}</span>
       </div>
       {openPop && (
         <div className="sort__popup">
           <ul>
             {popArr.map(obj => (
               <li
-                key={obj.sort}
+                key={obj.sortProperty}
                 onClick={() => onClickPopItem(obj)}
-                className={value.sort === obj.sort ? 'active' : ''}
+                className={
+                  sort.sortProperty === obj.sortProperty ? 'active' : ''
+                }
               >
                 {obj.name}
               </li>

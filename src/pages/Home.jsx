@@ -11,18 +11,15 @@ import { SearchContext } from '../App';
 
 const Home = () => {
   const categoryId = useSelector(state => state.filter.categoryId);
+  const activePop = useSelector(state => state.filter.sort.sortProperty);
+
   const dispatch = useDispatch();
-  console.log('redux state', categoryId);
 
   const { searchValue } = React.useContext(SearchContext);
   const [pizzas, setPizzas] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [activePop, setActivePop] = React.useState({
-    name: 'пополярности',
-    sort: 'raiting',
-  });
 
   const onClickCat = id => {
     dispatch(setCategoryId(id));
@@ -33,8 +30,8 @@ const Home = () => {
 
   React.useEffect(() => {
     setIsLoading(true);
-    const order = activePop.sort.includes('-') ? 'asc' : 'desc';
-    const sortBy = activePop.sort.replace('-', '');
+    const order = activePop.includes('-') ? 'asc' : 'desc';
+    const sortBy = activePop.replace('-', '');
     const categort = categoryId > 0 ? `category=${categoryId}` : '';
     const search = searchValue ? `search=${searchValue}` : '';
     fetch(
@@ -47,11 +44,12 @@ const Home = () => {
       });
     window.scrollTo(0, 0);
   }, [categoryId, activePop, searchValue, currentPage]);
+
   return (
     <div className="container">
       <div className="content__top">
         <Categories value={categoryId} onClickCat={onClickCat} />
-        <Sort value={activePop} onClickSort={i => setActivePop(i)} />
+        <Sort />
       </div>
       <h2 className="content__title">Все пиццы</h2>
       <div className="content__items">{isLoading ? skeletons : items}</div>
