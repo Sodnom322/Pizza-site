@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
+import axios from 'axios';
 import { setCategoryId } from '../Redux/slices/filterSlice.js';
 import PizzaBlock from '../Components/PizzaBlock/PizzaBlock';
 import Skeleton from '../Components/PizzaBlock/Skeleton';
@@ -34,14 +34,16 @@ const Home = () => {
     const sortBy = activePop.replace('-', '');
     const categort = categoryId > 0 ? `category=${categoryId}` : '';
     const search = searchValue ? `search=${searchValue}` : '';
-    fetch(
-      `https://657855a6f08799dc8044f459.mockapi.io/pizzas?page=${currentPage}&limit=4&${categort}&sortBy=${sortBy}&order=${order}&${search}`,
-    )
-      .then(res => res.json())
+
+    axios
+      .get(
+        `https://657855a6f08799dc8044f459.mockapi.io/pizzas?page=${currentPage}&limit=4&${categort}&sortBy=${sortBy}&order=${order}&${search}`,
+      )
       .then(res => {
-        setPizzas(res);
+        setPizzas(res.data);
         setIsLoading(false);
       });
+
     window.scrollTo(0, 0);
   }, [categoryId, activePop, searchValue, currentPage]);
 
