@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSort } from '../Redux/slices/filterSlice';
 
-const popArr = [
+export const popArr = [
   { name: 'популярности(DESC)', sortProperty: 'rating' },
   { name: 'популярности(ASC)', sortProperty: '-rating' },
   { name: 'цене(DESC)', sortProperty: 'price' },
@@ -14,12 +14,13 @@ const popArr = [
 function Sort() {
   const dispatch = useDispatch();
   const sort = useSelector(state => state.filter.sort);
+  console.log('SORt', sort);
 
-  const [openPop, setOpenPop] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
 
   const onClickPopItem = obj => {
     dispatch(setSort(obj));
-    setOpenPop(false);
+    setOpen(false);
   };
 
   return (
@@ -38,9 +39,9 @@ function Sort() {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span onClick={() => setOpenPop(!openPop)}>{sort.name}</span>
+        <span onClick={() => setOpen(!open)}>{sort.name}</span>
       </div>
-      {openPop && (
+      {open && (
         <div className="sort__popup">
           <ul>
             {popArr.map(obj => (
