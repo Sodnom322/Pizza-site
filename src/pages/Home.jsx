@@ -28,6 +28,8 @@ const Home = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const isSearch = React.useRef(false);
+  const isMounted = React.useRef(false);
 
   const { searchValue } = React.useContext(SearchContext);
   const [pizzas, setPizzas] = React.useState([]);
@@ -41,24 +43,7 @@ const Home = () => {
     dispatch(setCurrentPage(number));
   };
 
-  React.useEffect(() => {
-    if (window.location.search) {
-      const params = qs.parse(window.location.search.substring(1));
-      const sort = popArr.find(obj => obj.sortProperty === params.sortProperty);
-      dispatch(
-        setFilters({
-          ...params,
-          sort,
-        }),
-      );
-      console.log('params', params);
-    }
-  }, [dispatch]);
-
-  const items = pizzas.map(obj => <PizzaBlock key={obj.id} {...obj} />);
-  const skeletons = [...new Array(6)].map((_, i) => <Skeleton key={i} />);
-
-  React.useEffect(() => {
+  const fetchPizzas = () => {
     setIsLoading(true);
     const order = sort.sortProperty.includes('-') ? 'asc' : 'desc';
     const sortBy = sort.sortProperty.replace('-', '');
@@ -73,19 +58,45 @@ const Home = () => {
         setPizzas(res.data);
         setIsLoading(false);
       });
+  };
 
-    window.scrollTo(0, 0);
+  React.useEffect(() => {
+    if (window.location.search) {
+      const params = qs.parse(window.location.search.substring(1));
+      const sort = popArr.find(obj => obj.sortProperty === params.sortProperty);
+      dispatch(
+        setFilters({
+          ...params,
+          sort,
+        }),
+      );
+      isSearch.current = true;
+    }
+  }, [dispatch]);
+
+  const items = pizzas.map(obj => <PizzaBlock key={obj.id} {...obj} />);
+  const skeletons = [...new Array(6)].map((_, i) => <Skeleton key={i} />);
+
+  React.useEffect(() => {
+    window.scroll(0, 0);
+    if (!isSearch.current) {
+      fetchPizzas();
+    }
+    isSearch.current = false;
   }, [categoryId, sort, searchValue, currentPage]);
 
   React.useEffect(() => {
-    const queryString = qs.stringify({
-      sortProperty: sort.sortProperty,
-      categoryId,
-      currentPage,
-    });
+    if (isMounted.current) {
+      const queryString = qs.stringify({
+        sortProperty: sort.sortProperty,
+        categoryId,
+        currentPage,
+      });
 
-    navigate(`?${queryString}`);
-  }, [categoryId, sort, currentPage, navigate]);
+      navigate(`?${queryString}`);
+    }
+    isMounted.current = true;
+  }, [categoryId, sort.sortProperty, currentPage, navigate]);
 
   return (
     <div className="container">

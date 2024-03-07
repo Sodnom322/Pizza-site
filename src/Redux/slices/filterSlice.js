@@ -27,7 +27,6 @@ const filterSlice = createSlice({
       state.currentPage = Number(action.payload.currentPage);
       state.sort = action.payload.sort;
       state.categoryId = Number(action.payload.categoryId);
-      console.log('asdfas', action.payload);
     },
   },
 });
