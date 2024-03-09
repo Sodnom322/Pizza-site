@@ -14,6 +14,7 @@ import Categories from '../Components/Categories';
 import Sort, { popArr } from '../Components/Sort';
 import Pagination from '../Components/Pagination';
 import { SearchContext } from '../App';
+import { setItems } from '../Redux/slices/pizzasSlice.js';
 
 const Home = () => {
   const categoryId = useSelector(state => {
@@ -21,6 +22,9 @@ const Home = () => {
   });
   const sort = useSelector(state => {
     return state.filter.sort;
+  });
+  const pizzas = useSelector(state => {
+    return state.pizza.items;
   });
   const currentPage = useSelector(state => {
     return state.filter.currentPage;
@@ -32,7 +36,7 @@ const Home = () => {
   const isMounted = React.useRef(false);
 
   const { searchValue } = React.useContext(SearchContext);
-  const [pizzas, setPizzas] = React.useState([]);
+
   const [isLoading, setIsLoading] = React.useState(true);
 
   const onClickCat = id => {
@@ -51,10 +55,10 @@ const Home = () => {
     const search = searchValue ? `search=${searchValue}` : '';
 
     try {
-      const res = await axios.get(
+      const { data } = await axios.get(
         `https://657855a6f08799dc8044f459.mockapi.io/pizzas?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}&${search}`,
       );
-      setPizzas(res.data);
+      dispatch(setItems(data));
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
