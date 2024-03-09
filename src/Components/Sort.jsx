@@ -27,14 +27,11 @@ function Sort() {
     const handleClickOutside = event => {
       if (!event.composedPath().includes(sortRef.current)) {
         setOpen(false);
-        console.log('click out');
       }
     };
     document.body.addEventListener('click', handleClickOutside);
 
-    return () => {
-      document.body.removeEventListener('click', handleClickOutside);
-    };
+    return () => document.body.removeEventListener('click', handleClickOutside);
   }, []);
 
   return (
