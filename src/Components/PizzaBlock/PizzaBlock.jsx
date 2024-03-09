@@ -22,7 +22,7 @@ function PizzaBlock({ id, title, price, imageUrl, sizes, types }) {
       title,
       imageUrl,
       type: typeNames[activeType],
-      size: activeSize,
+      size: sizes[activeSize],
     };
     dispath(addItem(item));
   };

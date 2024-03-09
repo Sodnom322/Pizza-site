@@ -43,21 +43,25 @@ const Home = () => {
     dispatch(setCurrentPage(number));
   };
 
-  const fetchPizzas = () => {
+  const fetchPizzas = async () => {
     setIsLoading(true);
     const order = sort.sortProperty.includes('-') ? 'asc' : 'desc';
     const sortBy = sort.sortProperty.replace('-', '');
     const category = categoryId > 0 ? `category=${categoryId}` : '';
     const search = searchValue ? `search=${searchValue}` : '';
 
-    axios
-      .get(
+    try {
+      const res = await axios.get(
         `https://657855a6f08799dc8044f459.mockapi.io/pizzas?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}&${search}`,
-      )
-      .then(res => {
-        setPizzas(res.data);
-        setIsLoading(false);
-      });
+      );
+      setPizzas(res.data);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      alert('Ошибка при получении пиц...');
+      console.log('Error');
+    }
+    window.scroll(0, 0);
   };
 
   React.useEffect(() => {

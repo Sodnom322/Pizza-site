@@ -2,12 +2,24 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import CartItem from '../Components/CartItem';
+import { clearItems, removeItem } from '../Redux/slices/cartSlice';
+import CartEmpty from '../Components/CartEmpty';
 
 export const Cart = () => {
   const dispath = useDispatch();
+  const { totalPrice, items } = useSelector(state => state.cart);
 
-  const items = useSelector(state => state.cart.items);
-  console.log(items);
+  const onClickClear = () => {
+    if (window.confirm('Вы действительно хотите отчистить корзину?')) {
+      dispath(clearItems());
+    }
+  };
+  const totalCount = items.reduce((sum, item) => sum + item.count, 0);
+
+  if (totalPrice === 0) {
+    return <CartEmpty />;
+  }
+
   return (
     <div className="container">
       <div class="cart">
@@ -44,7 +56,7 @@ export const Cart = () => {
             </svg>
             Корзина
           </h2>
-          <div class="cart__clear">
+          <div onClick={onClickClear} class="cart__clear">
             <svg
               width="20"
               height="20"
@@ -94,11 +106,11 @@ export const Cart = () => {
           <div class="cart__bottom-details">
             <span>
               {' '}
-              Всего пицц: <b>3 шт.</b>{' '}
+              Всего пицц: <b>{totalCount}</b>{' '}
             </span>
             <span>
               {' '}
-              Сумма заказа: <b>900 ₽</b>{' '}
+              Сумма заказа: <b>{totalPrice}</b>{' '}
             </span>
           </div>
           <div class="cart__bottom-buttons">
