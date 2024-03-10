@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import axios from 'axios';
+
 import { useNavigate } from 'react-router-dom';
 import qs from 'qs';
 import {
@@ -14,7 +14,7 @@ import Categories from '../Components/Categories';
 import Sort, { popArr } from '../Components/Sort';
 import Pagination from '../Components/Pagination';
 import { SearchContext } from '../App';
-import { setItems } from '../Redux/slices/pizzasSlice.js';
+import { fetchPizzas } from '../Redux/slices/pizzasSlice.js';
 
 const Home = () => {
   const categoryId = useSelector(state => {
@@ -23,8 +23,8 @@ const Home = () => {
   const sort = useSelector(state => {
     return state.filter.sort;
   });
-  const pizzas = useSelector(state => {
-    return state.pizza.items;
+  const { items, status } = useSelector(state => {
+    return state.pizza;
   });
   const currentPage = useSelector(state => {
     return state.filter.currentPage;
@@ -37,8 +37,6 @@ const Home = () => {
 
   const { searchValue } = React.useContext(SearchContext);
 
-  const [isLoading, setIsLoading] = React.useState(true);
-
   const onClickCat = id => {
     dispatch(setCategoryId(id));
   };
@@ -47,24 +45,21 @@ const Home = () => {
     dispatch(setCurrentPage(number));
   };
 
-  const fetchPizzas = async () => {
-    setIsLoading(true);
+  const getPizzas = async () => {
     const order = sort.sortProperty.includes('-') ? 'asc' : 'desc';
     const sortBy = sort.sortProperty.replace('-', '');
     const category = categoryId > 0 ? `category=${categoryId}` : '';
     const search = searchValue ? `search=${searchValue}` : '';
 
-    try {
-      const { data } = await axios.get(
-        `https://657855a6f08799dc8044f459.mockapi.io/pizzas?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}&${search}`,
-      );
-      dispatch(setItems(data));
-      setIsLoading(false);
-    } catch (error) {
-      setIsLoading(false);
-      alert('Ошибка при получении пиц...');
-      console.log('Error');
-    }
+    dispatch(
+      fetchPizzas({
+        order,
+        sortBy,
+        category,
+        search,
+        currentPage,
+      }),
+    );
     window.scroll(0, 0);
   };
 
@@ -82,13 +77,13 @@ const Home = () => {
     }
   }, [dispatch]);
 
-  const items = pizzas.map(obj => <PizzaBlock key={obj.id} {...obj} />);
+  const pizzas = items.map(obj => <PizzaBlock key={obj.id} {...obj} />);
   const skeletons = [...new Array(6)].map((_, i) => <Skeleton key={i} />);
 
   React.useEffect(() => {
     window.scroll(0, 0);
     if (!isSearch.current) {
-      fetchPizzas();
+      getPizzas();
     }
     isSearch.current = false;
   }, [categoryId, sort, searchValue, currentPage]);
@@ -113,7 +108,22 @@ const Home = () => {
         <Sort />
       </div>
       <h2 className="content__title">Все пиццы</h2>
-      <div className="content__items">{isLoading ? skeletons : items}</div>
+      {status === 'error' ? (
+        <div className="content__error-info">
+          <h2>
+            Произошла ошибка 😕
+            <p>
+              К сожалению не удалось получить пиццы! Попробуйте поворить попытку
+              позже
+            </p>
+          </h2>
+        </div>
+      ) : (
+        <div className="content__items">
+          {status === 'loading' ? skeletons : pizzas}
+        </div>
+      )}
+
       <Pagination currentPage={currentPage} onChangePage={onChangePage} />
     </div>
   );
