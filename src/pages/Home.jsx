@@ -24,13 +24,12 @@ const Home = () => {
   const sort = useSelector(selectSort);
   const { items, status } = useSelector(selectPizzaData);
   const currentPage = useSelector(selectCurrentPage);
+  const searchValue = useSelector(state => state.filter.searchValue);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isSearch = React.useRef(false);
   const isMounted = React.useRef(false);
-
-  const { searchValue } = React.useContext(SearchContext);
 
   const onClickCat = id => {
     dispatch(setCategoryId(id));
