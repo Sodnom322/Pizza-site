@@ -16,7 +16,7 @@ import Skeleton from '../Components/PizzaBlock/Skeleton';
 import Categories from '../Components/Categories';
 import Sort, { popArr } from '../Components/Sort';
 import Pagination from '../Components/Pagination';
-import { SearchContext } from '../App';
+
 import { fetchPizzas, selectPizzaData } from '../Redux/slices/pizzasSlice.js';
 
 const Home = () => {
