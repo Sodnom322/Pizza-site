@@ -1,6 +1,6 @@
-import Header from './Components/Header';
+
 import './scss/app.scss';
-import React, { Children } from 'react';
+
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import { Routes, Route } from 'react-router-dom';
