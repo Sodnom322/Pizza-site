@@ -16,8 +16,11 @@ import Skeleton from '../Components/PizzaBlock/Skeleton';
 import Categories from '../Components/Categories';
 import Sort, { popArr } from '../Components/Sort';
 import Pagination from '../Components/Pagination/index';
-
 import { fetchPizzas, selectPizzaData } from '../Redux/slices/pizzasSlice.js';
+
+
+
+
 
 const Home :React.FC= () => {
   const categoryId = useSelector(selectCategoryId);
