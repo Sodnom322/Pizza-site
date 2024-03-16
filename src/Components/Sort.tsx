@@ -1,27 +1,27 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectSort, setSort } from '../Redux/slices/filterSlice';
+import { SortPropertyEnum, selectSort, setSort } from '../Redux/slices/filterSlice';
 
 
 
   
 type popType = {
   name:string;
-  sortProperty:string;
+  sortProperty:SortPropertyEnum;
 }
 
 
 
 export const popArr:popType[] = [
-  { name: 'популярности(DESC)', sortProperty: 'rating' },
-  { name: 'популярности(ASC)', sortProperty: '-rating' },
-  { name: 'цене(DESC)', sortProperty: 'price' },
-  { name: 'цене(ASC)', sortProperty: '-price' },
-  { name: 'алфавиту(DESC)', sortProperty: 'title' },
-  { name: 'алфавиту(ASC)', sortProperty: '-title' },
+  { name: 'популярности(DESC)', sortProperty: SortPropertyEnum.RAITING_DESC},
+  { name: 'популярности(ASC)', sortProperty: SortPropertyEnum.RAITING_ASC},
+  { name: 'цене(DESC)', sortProperty: SortPropertyEnum.PRICE_DESC },
+  { name: 'цене(ASC)', sortProperty: SortPropertyEnum.PRICE_ASC},
+  { name: 'алфавиту(DESC)', sortProperty: SortPropertyEnum.TITLE_DESC },
+  { name: 'алфавиту(ASC)', sortProperty: SortPropertyEnum.TITLE_ASC },
 ];
 
-function Sort() {
+function SortPop() {
   const dispatch = useDispatch();
   const sort = useSelector(selectSort);
   const sortRef = React.useRef<HTMLDivElement>(null);
@@ -37,6 +37,7 @@ function Sort() {
     const handleClickOutside = (event:MouseEvent) => {
       if (sortRef.current && !event.composedPath().includes(sortRef.current)) {
         setOpen(false);
+        
       }
     };
     document.body.addEventListener('click', handleClickOutside);
@@ -83,4 +84,4 @@ function Sort() {
   );
 }
 
-export default Sort;
+export default SortPop;

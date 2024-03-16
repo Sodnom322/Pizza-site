@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { useNavigate } from 'react-router-dom';
 import qs from 'qs';
@@ -10,35 +10,33 @@ import {
   setCategoryId,
   setCurrentPage,
   setFilters,
-} from '../Redux/slices/filterSlice.js';
+} from '../Redux/slices/filterSlice';
 import PizzaBlock from '../Components/PizzaBlock/PizzaBlock';
 import Skeleton from '../Components/PizzaBlock/Skeleton';
 import Categories from '../Components/Categories';
-import Sort, { popArr } from '../Components/Sort';
+import { popArr } from '../Components/Sort';
 import Pagination from '../Components/Pagination/index';
-import { fetchPizzas, selectPizzaData } from '../Redux/slices/pizzasSlice.js';
+import { SearchPizzaParams, fetchPizzas, selectPizzaData } from '../Redux/slices/pizzasSlice';
+import { useAppDispatch } from '../Redux/store';
+import SortPop from '../Components/Sort';
 
-
-
-
-
-const Home :React.FC= () => {
+const Home: React.FC = () => {
   const categoryId = useSelector(selectCategoryId);
   const sort = useSelector(selectSort);
   const { items, status } = useSelector(selectPizzaData);
   const currentPage = useSelector(selectCurrentPage);
-  const searchValue = useSelector((state:any) => state.filter.searchValue);
+  const searchValue = useSelector((state: any) => state.filter.searchValue);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const isSearch = React.useRef(false);
   const isMounted = React.useRef(false);
 
-  const onClickCat = (id:number) => {
+  const onClickCat = (id: number) => {
     dispatch(setCategoryId(id));
   };
 
-  const onChangePage = (number:number) => {
+  const onChangePage = (number: number) => {
     dispatch(setCurrentPage(number));
   };
 
@@ -49,61 +47,64 @@ const Home :React.FC= () => {
     const search = searchValue ? `search=${searchValue}` : '';
 
     dispatch(
-      //@ts-ignore
       fetchPizzas({
         order,
         sortBy,
         category,
         search,
-        currentPage,
+        currentPage: String(currentPage),
       }),
     );
     window.scroll(0, 0);
   };
 
-  React.useEffect(() => {
+/*   React.useEffect(() => {
     if (window.location.search) {
-      const params = qs.parse(window.location.search.substring(1));
-      const sort = popArr.find(obj => obj.sortProperty === params.sortProperty);
+      const params = (qs.parse(window.location.search.substring(1))) as unknown as SearchPizzaParams
+      const sort = popArr.find(obj => obj.sortProperty === params.sortBy);
+    
       dispatch(
         setFilters({
-          ...params,
-          sort,
+        searchValue:params.search,
+        categoryId:Number(params.category),
+        currentPage: Number(params.currentPage), 
+        sort: sort ? sort : popArr[0],
         }),
       );
-      isSearch.current = true;
+      isMounted.current = true;
     }
-  }, [dispatch]);
+  }, []); */
 
-  const pizzas = items.map((obj:any) => <PizzaBlock key={obj.id} {...obj} />);
+  const pizzas = items.map((obj: any) => <PizzaBlock key={obj.id} {...obj} />);
   const skeletons = [...new Array(6)].map((_, i) => <Skeleton key={i} />);
 
   React.useEffect(() => {
-    window.scroll(0, 0);
-    if (!isSearch.current) {
+   
       getPizzas();
-    }
-    isSearch.current = false;
+  
   }, [categoryId, sort, searchValue, currentPage]);
 
-  React.useEffect(() => {
+/*   React.useEffect(() => {
     if (isMounted.current) {
-      const queryString = qs.stringify({
+      const params = {
+        categoryId: categoryId > 0 ? categoryId : null,
         sortProperty: sort.sortProperty,
-        categoryId,
         currentPage,
-      });
+      };
+      const queryString = qs.stringify(params, { skipNulls: true });
 
-      navigate(`?${queryString}`);
+      navigate(`/?${queryString}`);
     }
-    isMounted.current = true;
+    if (!window.location.search) {
+      dispatch(fetchPizzas({} as SearchPizzaParams));
+    }
   }, [categoryId, sort.sortProperty, currentPage, navigate]);
-
+ */
   return (
     <div className="container">
       <div className="content__top">
         <Categories value={categoryId} onClickCat={onClickCat} />
-        <Sort />
+        <SortPop />
       </div>
       <h2 className="content__title">Все пиццы</h2>
       {status === 'error' ? (
