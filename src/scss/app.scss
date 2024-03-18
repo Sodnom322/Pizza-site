@@ -219,17 +219,36 @@ body {
       width: 13%;
 
       &-minus {
+        
         svg {
           path:first-of-type {
             display: none;
           }
         }
+
+        &--disabled{
+          opacity: 0.5;
+          border-color: #787878;
+
+          &:active{
+            transform: none;
+          }
+
+          &:hover{
+            background: transparent;
+          }
+          svg path{
+            fill: #787878;
+          }
+        }
+      
       }
 
       b {
         font-size: 22px;
       }
     }
+  
 
     &-price {
       display: flex;
