@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import Search from './Search';
 import { useSelector } from 'react-redux';
 import { selectCart } from '../Redux/slices/cartSlice';
+import { Cart } from '../pages/Cart';
 
 function Header () {
   const { items, totalPrice } = useSelector(selectCart);
@@ -21,7 +22,7 @@ function Header () {
             </div>
           </div>
         </Link>
-        <Search />
+       {pathname !== '/cart' && <Search />}
         <div className="header__cart">
           {pathname !== '/cart' && (
             <Link to="/cart" className="button button--cart">
