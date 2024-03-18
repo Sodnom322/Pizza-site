@@ -1,6 +1,8 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { SortPropertyEnum, selectSort, setSort } from '../Redux/slices/filterSlice';
+import {  useDispatch } from 'react-redux';
+import { Sort, SortPropertyEnum, selectSort, setSort } from '../Redux/slices/filterSlice';
+
+import { useWhyDidYouUpdate } from 'ahooks';
 
 
 
@@ -21,9 +23,13 @@ export const popArr:popType[] = [
   { name: 'алфавиту(ASC)', sortProperty: SortPropertyEnum.TITLE_ASC },
 ];
 
-function SortPop() {
+type SortPopupProps = {
+  value:Sort
+}
+
+const SortPop :React.FC<SortPopupProps> = React.memo(({value})  => {
   const dispatch = useDispatch();
-  const sort = useSelector(selectSort);
+  
   const sortRef = React.useRef<HTMLDivElement>(null);
 
   const [open, setOpen] = React.useState(false);
@@ -44,6 +50,7 @@ function SortPop() {
 
     return () => document.body.removeEventListener('click', handleClickOutside);
   }, []);
+  useWhyDidYouUpdate('sort',{ value })
 
   return (
     <div className="sort" ref={sortRef}>
@@ -61,7 +68,7 @@ function SortPop() {
           />
         </svg>
         <b>Сортировка по:</b>
-        <span onClick={() => setOpen(!open)}>{sort.name}</span>
+        <span onClick={() => setOpen(!open)}>{value.name}</span>
       </div>
       {open && (
         <div className="sort__popup">
@@ -71,7 +78,7 @@ function SortPop() {
                 key={obj.sortProperty}
                 onClick={() => onClickPopItem(obj)}
                 className={
-                  sort.sortProperty === obj.sortProperty ? 'active' : ''
+                  value.sortProperty === obj.sortProperty ? 'active' : ''
                 }
               >
                 {obj.name}
@@ -82,6 +89,6 @@ function SortPop() {
       )}
     </div>
   );
-}
+})
 
 export default SortPop;

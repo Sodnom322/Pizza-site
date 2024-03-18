@@ -1,11 +1,12 @@
 import React from "react";
+import useWhyDidYouUpdate  from 'ahooks/lib/useWhyDidYouUpdate';
 
 type CategoriesProps = {
   value:number;
   onClickCat:(i:number) => void;
 }
 
-const Categories:React.FC<CategoriesProps> = ({ value, onClickCat }) => {
+const Categories:React.FC<CategoriesProps> = React.memo(({ value, onClickCat }) => {
   const pizzaCategories = [
     'Все',
     'Мясные',
@@ -14,6 +15,7 @@ const Categories:React.FC<CategoriesProps> = ({ value, onClickCat }) => {
     'Острые',
     'Закрытые',
   ];
+
 
   return (
     <div className="categories">
@@ -30,5 +32,5 @@ const Categories:React.FC<CategoriesProps> = ({ value, onClickCat }) => {
       </ul>
     </div>
   );
-}
+})
 export default Categories;

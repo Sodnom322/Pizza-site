@@ -32,9 +32,9 @@ const Home: React.FC = () => {
   const isSearch = React.useRef(false);
   const isMounted = React.useRef(false);
 
-  const onClickCat = (id: number) => {
+  const onClickCat = React.useCallback( (id: number) => {
     dispatch(setCategoryId(id));
-  };
+  } ,[])
 
   const onChangePage = (number: number) => {
     dispatch(setCurrentPage(number));
@@ -100,11 +100,13 @@ const Home: React.FC = () => {
     }
   }, [categoryId, sort.sortProperty, currentPage, navigate]);
  */
+
+  console.log(categoryId)
   return (
     <div className="container">
       <div className="content__top">
         <Categories value={categoryId} onClickCat={onClickCat} />
-        <SortPop />
+        <SortPop  value={sort}/>
       </div>
       <h2 className="content__title">Все пиццы</h2>
       {status === 'error' ? (
