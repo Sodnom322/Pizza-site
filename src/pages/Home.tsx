@@ -3,22 +3,19 @@ import { useSelector } from 'react-redux';
 
 import { useNavigate } from 'react-router-dom';
 import qs from 'qs';
-import {
-  selectCategoryId,
-  selectCurrentPage,
-  selectSort,
-  setCategoryId,
-  setCurrentPage,
-  setFilters,
-} from '../Redux/slices/filterSlice';
+
 import PizzaBlock from '../Components/PizzaBlock/PizzaBlock';
 import Skeleton from '../Components/PizzaBlock/Skeleton';
 import Categories from '../Components/Categories';
 import { popArr } from '../Components/Sort';
 import Pagination from '../Components/Pagination/index';
-import { SearchPizzaParams, fetchPizzas, selectPizzaData } from '../Redux/slices/pizzasSlice';
+
 import { useAppDispatch } from '../Redux/store';
 import SortPop from '../Components/Sort';
+import { selectCategoryId, selectCurrentPage, selectSort } from '../Redux/filter/selector';
+import { selectPizzaData } from '../Redux/pizza/selector';
+import { setCategoryId, setCurrentPage } from '../Redux/filter/slice';
+import { fetchPizzas } from '../Redux/pizza/asyncAction';
 
 const Home: React.FC = () => {
   const categoryId = useSelector(selectCategoryId);
